@@ -1,6 +1,38 @@
-# 易航扬的博客 :link: https://yihangyang666.github.io 
-### :page_facing_up: [1](https://yihangyang666.github.io/tag.html) 
-### :speech_balloon: 0 
-### :hibiscus: 16 
-### :alarm_clock: 2024-08-21 18:59:56 
-### Powered by :heart: [Gmeek](https://github.com/Meekdai/Gmeek)
+# 易航扬的学习网站
+
+这是我的个人学习网站，用于记录学习进度、分享资源和展示项目。
+
+## 网站结构
+
+- `index.html`: 网站主页
+- `resources.html`: 学习资源页面
+- `journal.html`: 学习日志页面
+- `projects.html`: 项目展示页面
+- `style.css`: 网站样式表
+
+## 功能
+
+1. **首页**: 展示个人简介、学习目标和最新动态
+2. **学习资源**: 分享学习材料、书籍推荐和在线课程
+3. **学习日志**: 记录学习进度和心得
+4. **项目展示**: 展示完成的项目和实验（正在开发中）
+
+## 如何运行
+
+1. 克隆此仓库到本地
+2. 使用浏览器打开 `index.html` 文件
+
+## 维护说明
+
+- 更新内容：直接编辑相应的 HTML 文件
+- 添加新页面：创建新的 HTML 文件，并在 `index.html` 中添加链接
+- 修改样式：编辑 `style.css` 文件
+- 添加新功能：可能需要引入 JavaScript 文件
+
+## 贡献
+
+欢迎提出建议和改进意见。请随时提交 Issue 或 Pull Request。
+
+## 许可
+
+本项目采用 [MIT 许可证](LICENSE)。
