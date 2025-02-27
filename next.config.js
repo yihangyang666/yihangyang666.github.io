@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   basePath: '',
   images: {
-    domains: ['localhost'],
+    unoptimized: true,
   },
   output: 'export',
   distDir: 'out',
