@@ -1,0 +1,30 @@
+{
+  "name": "website",
+  "version": "1.0.0",
+  "description": "李墨飞扬的个人网站",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "export": "next export",
+    "deploy": "next build && next export && gh-pages -d out"
+  },
+  "keywords": [],
+  "author": "李墨飞扬",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^22.13.5",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "autoprefixer": "^10.4.20",
+    "next": "^15.2.0",
+    "postcss": "^8.5.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^4.0.9",
+    "typescript": "^5.7.3"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
+  }
+}
