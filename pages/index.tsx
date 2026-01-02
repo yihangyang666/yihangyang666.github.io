@@ -1,322 +1,195 @@
-import Head from 'next/head';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { personalInfo, courses, skills, experiences, selfEvaluation } from '../data/profile';
+import Layout from '../components/Layout';
+import CourseCard from '../components/CourseCard';
+import SkillCard from '../components/SkillCard';
+import TimelineItem from '../components/TimelineItem';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('about');
-  const [loaded, setLoaded] = useState(false);
+  const [issues, setIssues] = useState<any[]>([]);
+  const [loadingIssues, setLoadingIssues] = useState(false);
+
+  const tabs = [
+    { id: 'about', label: '关于我' },
+    { id: 'projects', label: '主修课程' },
+    { id: 'skills', label: '技能特长' },
+    { id: 'experience', label: '经历' },
+    { id: 'thoughts', label: '碎碎念' },
+  ];
 
   useEffect(() => {
-    setLoaded(true);
-    // @ts-ignore
-    if (window.layui) {
-      // @ts-ignore
-      window.layui.use(['element', 'layer', 'util'], function(){
-        // @ts-ignore
-        var element = layui.element;
-        // @ts-ignore
-        var util = layui.util;
-        
-        // 固定条
-        util.fixbar({
-          bars: [
-            {icon: 'layui-icon-top', type: 'top'},
-            {icon: 'layui-icon-dialogue'}
-          ],
-          click: function(type: string){
-            if(type === 'top'){
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-          }
+    if (activeTab === 'thoughts' && issues.length === 0) {
+      setLoadingIssues(true);
+      fetch('https://api.github.com/repos/yihangyang666/yihangyang666.github.io/issues?state=open')
+        .then(res => res.json())
+        .then(data => {
+          setIssues(Array.isArray(data) ? data : []);
+          setLoadingIssues(false);
+        })
+        .catch(err => {
+          console.error("Failed to fetch issues", err);
+          setLoadingIssues(false);
         });
-
-        // 重新渲染
-        element.render('nav');
-        element.render('tab');
-        element.render('progress');
-      });
     }
   }, [activeTab]);
 
-  const personalInfo = {
-    name: '李墨飞扬',
-    birth: '2003.04.03',
-    location: '安徽 亳州',
-    education: '本科在读',
-    phone: '173-5673-2261',
-    email: '286178216@qq.com',
-    university: '中北大学',
-    major: '数据科学与大数据技术',
-    github: 'https://github.com/yihangyang666'
-  };
-
-  const skills = [
-    '数据结构',
-    '计算机组成原理',
-    '计算机网络',
-    '操作系统',
-    'Python',
-    '大数据处理技术',
-    '时间序列分析',
-    '数字图像处理',
-    '机器学习与数据挖掘',
-  ];
-
-  const experiences = [
-    {
-      period: '2023.01-2024.06',
-      title: '计算机科学与技术学院采编部副部',
-      details: [
-        '主导多场技术讲座与校园活动的采编工作',
-        '协助采编部部长完成对新同学的培训工作',
-        '带领新同学积极参与学校和学院组织的志愿活动',
-      ],
-    },
-    {
-      period: '2023.01-2023.09',
-      title: '第四届中国大学生智能照明和智能穿戴创新创业大赛',
-      achievement: '决赛一等奖',
-    },
-    {
-      period: '2024.07',
-      title: '第七届全国大学生数学数学竞赛暨数学精英挑战赛',
-      achievement: '三等奖',
-    },
-  ];
-
   return (
-    <div className={`layui-layout layui-layout-admin ${loaded ? 'layui-anim layui-anim-upbit' : ''}`}
-         style={{
-           backgroundImage: 'url(/image/background.png)',
-           backgroundSize: 'cover',
-           backgroundAttachment: 'fixed'
-         }}>
-      <Head>
-        <title>李墨飞扬的个人网站</title>
-        <meta name="description" content="李墨飞扬的个人简历和项目展示" />
-        <link rel="icon" href="/favicon.ico" />
-        <link href="//unpkg.com/layui@2.9.23/dist/css/layui.css" rel="stylesheet" />
-        <script src="//unpkg.com/layui@2.9.23/dist/layui.js"></script>
-      </Head>
-
-      <div className="layui-header">
-        <div className="layui-logo layui-bg-black">李墨飞扬的个人网站</div>
-        <ul className="layui-nav layui-layout-right">
-          <li className="layui-nav-item">
-            <a href={personalInfo.github} target="_blank" rel="noopener noreferrer">
-              <i className="layui-icon layui-icon-login-github"></i> GitHub
-            </a>
-          </li>
-          <li className="layui-nav-item">
-            <a href={`mailto:${personalInfo.email}`}>
-              <i className="layui-icon layui-icon-email"></i> 联系我
-            </a>
-          </li>
-        </ul>
-      </div>
-
-      <div className="layui-body" style={{ padding: '15px', backgroundColor: '#f2f2f2' }}>
-        {/* 个人信息卡片 */}
-        <div className="layui-card layui-anim layui-anim-scale">
-          <div className="layui-card-header" style={{ height: 'auto', lineHeight: '28px' }}>
-            <h2 style={{ margin: '10px 0' }}>
-              <i className="layui-icon layui-icon-user"></i> 个人信息
-            </h2>
-          </div>
-          <div className="layui-card-body">
-            <div className="layui-row">
-              <div className="layui-col-md3">
-                <div style={{ 
-                  width: '200px', 
-                  height: '200px', 
-                  position: 'relative', 
-                  margin: '0 auto',
-                  boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-                  borderRadius: '50%',
-                  overflow: 'hidden'
-                }}>
-                  <Image
-                    src="/image/myphoto.jpg"
-                    alt="李墨飞扬"
-                    layout="fill"
-                    objectFit="cover"
-                    className="layui-anim layui-anim-rotate"
-                  />
-                </div>
+    <Layout>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Left Column: Profile Card */}
+        <div className="lg:col-span-4 xl:col-span-3">
+          <div className="glass-card rounded-2xl p-8 text-center sticky top-24 animate-slide-up">
+            <div className="relative w-32 h-32 mx-auto mb-6">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary to-secondary animate-pulse-slow blur-md"></div>
+              <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-white/20 ring-4 ring-white/5">
+                <Image
+                  src="/image/picture.png"
+                  alt={personalInfo.name}
+                  fill
+                  style={{ objectFit: 'cover' }}
+                  className="hover:scale-110 transition-transform duration-500"
+                  priority
+                />
               </div>
-              <div className="layui-col-md9">
-                <h2 className="layui-elip" style={{ 
-                  fontSize: '24px',
-                  marginBottom: '20px',
-                  color: '#009688'
-                }}>{personalInfo.name}</h2>
-                <div className="layui-row">
-                  <div className="layui-col-md6">
-                    <p className="layui-text"><i className="layui-icon layui-icon-date"></i> 出生年月：{personalInfo.birth}</p>
-                    <p className="layui-text"><i className="layui-icon layui-icon-location"></i> 现居城市：{personalInfo.location}</p>
-                    <p className="layui-text"><i className="layui-icon layui-icon-read"></i> 最高学历：{personalInfo.education}</p>
-                    <p className="layui-text"><i className="layui-icon layui-icon-cellphone"></i> 联系电话：{personalInfo.phone}</p>
-                  </div>
-                  <div className="layui-col-md6">
-                    <p className="layui-text"><i className="layui-icon layui-icon-email"></i> 邮箱地址：{personalInfo.email}</p>
-                    <p className="layui-text"><i className="layui-icon layui-icon-home"></i> 学校：{personalInfo.university}</p>
-                    <p className="layui-text"><i className="layui-icon layui-icon-form"></i> 专业：{personalInfo.major}</p>
-                    <p className="layui-text">
-                      <i className="layui-icon layui-icon-login-github"></i> GitHub：
-                      <a href={personalInfo.github} target="_blank" rel="noopener noreferrer" className="layui-font-blue">
-                        {personalInfo.github}
-                      </a>
-                    </p>
-                  </div>
-                </div>
+            </div>
+
+            <h1 className="text-3xl font-bold text-white mb-2">{personalInfo.name}</h1>
+            <p className="text-primary-light font-medium mb-6">{personalInfo.education} @ {personalInfo.school}</p>
+
+            <div className="space-y-3 text-left bg-white/5 rounded-xl p-5 mb-6 text-sm">
+              <div className="flex items-center text-gray-300">
+                <span className="w-5 text-center mr-3">🎂</span> {personalInfo.birth}
               </div>
+              <div className="flex items-center text-gray-300">
+                <span className="w-5 text-center mr-3">📍</span> {personalInfo.location}
+              </div>
+              <div className="flex items-center text-gray-300">
+                <span className="w-5 text-center mr-3">🎓</span> {personalInfo.major}
+              </div>
+              <div className="flex items-center text-gray-300">
+                <span className="w-5 text-center mr-3">📧</span> <span className="truncate">{personalInfo.email}</span>
+              </div>
+            </div>
+
+            <div className="flex justify-center space-x-4">
+              <a href="https://github.com/yihangyang666" target="_blank" rel="noreferrer" className="p-2 bg-white/5 rounded-full hover:bg-primary transition-colors hover:text-white text-gray-400">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" /></svg>
+              </a>
             </div>
           </div>
         </div>
 
-        {/* 导航标签 */}
-        <div className="layui-tab layui-tab-card" lay-filter="info-tab" style={{ marginTop: '20px' }}>
-          <ul className="layui-tab-title">
-            <li className={activeTab === 'about' ? 'layui-this' : ''} onClick={() => setActiveTab('about')}>
-              <i className="layui-icon layui-icon-about"></i> 关于我
-            </li>
-            <li className={activeTab === 'skills' ? 'layui-this' : ''} onClick={() => setActiveTab('skills')}>
-              <i className="layui-icon layui-icon-star"></i> 技能特长
-            </li>
-            <li className={activeTab === 'experience' ? 'layui-this' : ''} onClick={() => setActiveTab('experience')}>
-              <i className="layui-icon layui-icon-time"></i> 经历
-            </li>
-            <li className={activeTab === 'projects' ? 'layui-this' : ''} onClick={() => setActiveTab('projects')}>
-              <i className="layui-icon layui-icon-app"></i> 项目展示
-            </li>
-          </ul>
-          <div className="layui-tab-content">
-            <div className={`layui-tab-item ${activeTab === 'about' ? 'layui-show' : ''} layui-anim layui-anim-fadeIn`}>
-              <div className="layui-text">
-                <blockquote className="layui-elem-quote">
-                  我是一名就读于中北大学数据科学与大数据技术专业的学生。我热爱编程和数据分析，
-                  同时也积极参与校园活动和各类竞赛。在学习期间，我注重理论知识的掌握，也重视实践能力的培养。
-                  我希望能够在未来的工作中运用所学知识，为企业创造价值。
-                </blockquote>
-              </div>
-            </div>
+        {/* Right Column: Content Tabs */}
+        <div className="lg:col-span-8 xl:col-span-9 animate-fade-in" style={{ animationDelay: '0.2s' }}>
 
-            <div className={`layui-tab-item ${activeTab === 'skills' ? 'layui-show' : ''} layui-anim layui-anim-fadeIn`}>
-              <div className="layui-row layui-col-space15">
+          <div className="flex space-x-2 overflow-x-auto pb-4 mb-4 scrollbar-hide">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`
+                    px-6 py-3 rounded-full text-sm font-semibold transition-all duration-300 flex-shrink-0
+                    ${activeTab === tab.id
+                    ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-105'
+                    : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'}
+                  `}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="min-h-[500px]">
+            {activeTab === 'about' && (
+              <div className="space-y-6 animate-slide-up">
+                <div className="glass-card p-8 rounded-2xl relative overflow-hidden">
+                  <div className="absolute top-0 right-0 p-4 opacity-10">
+                    <svg className="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm0 6c-3.313 0-6 2.687-6 6s2.687 6 6 6 6-2.687 6-6-2.687-6-6-6zm0 10c-2.206 0-4-1.794-4-4s1.794-4 4-4 4 1.794 4 4-1.794 4-4 4z" /></svg>
+                  </div>
+                  <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
+                    <span className="w-1 h-8 bg-primary rounded-full mr-3"></span>
+                    自我评价
+                  </h2>
+                  <div className="space-y-4 text-gray-300 leading-relaxed font-light text-lg">
+                    {selfEvaluation.map((item, i) => (
+                      <p key={i} className="flex items-start">
+                        <span className="mr-3 mt-2 text-primary">❝</span>
+                        {item}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'projects' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-slide-up">
+                {courses.map((course, index) => (
+                  <CourseCard key={index} name={course.name} color={course.color} />
+                ))}
+              </div>
+            )}
+
+            {activeTab === 'skills' && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-slide-up">
                 {skills.map((skill, index) => (
-                  <div key={index} className="layui-col-md4">
-                    <div className="layui-card layui-bg-gray hover-shadow">
-                      <div className="layui-card-body">
-                        <div className="layui-progress layui-progress-big" lay-showpercent="true">
-                          <div className="layui-progress-bar" lay-percent="90%"></div>
-                        </div>
-                        <h3 className="layui-elip" style={{ marginTop: '10px' }}>{skill}</h3>
-                      </div>
-                    </div>
-                  </div>
+                  <SkillCard key={index} name={skill.name} type={skill.type} />
                 ))}
               </div>
-            </div>
+            )}
 
-            <div className={`layui-tab-item ${activeTab === 'experience' ? 'layui-show' : ''} layui-anim layui-anim-fadeIn`}>
-              <ul className="layui-timeline">
-                {experiences.map((exp, index) => (
-                  <li key={index} className="layui-timeline-item">
-                    <i className="layui-icon layui-timeline-axis">&#xe63f;</i>
-                    <div className="layui-timeline-content layui-text">
-                      <div className="layui-timeline-title">
-                        <span className="layui-badge layui-bg-green">{exp.period}</span>
-                      </div>
-                      <h3 className="layui-timeline-title" style={{ color: '#009688' }}>{exp.title}</h3>
-                      {exp.achievement && (
-                        <p>
-                          <span className="layui-badge-rim">{exp.achievement}</span>
-                        </p>
-                      )}
-                      {exp.details && (
-                        <ul className="layui-text">
-                          {exp.details.map((detail, idx) => (
-                            <li key={idx} style={{ listStyle: 'disc inside' }}>{detail}</li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className={`layui-tab-item ${activeTab === 'projects' ? 'layui-show' : ''} layui-anim layui-anim-fadeIn`}>
-              <div className="layui-row layui-col-space15">
-                <div className="layui-col-md6">
-                  <div className="layui-card hover-shadow">
-                    <div className="layui-card-header">
-                      <span className="layui-badge layui-bg-blue">进行中</span> 招聘推荐系统
-                    </div>
-                    <div className="layui-card-body">
-                      <p>基于机器学习的招聘职位推荐系统，可以根据用户的技能和经验推荐合适的职位。</p>
-                      <div className="layui-progress layui-progress-big" lay-showpercent="true">
-                        <div className="layui-progress-bar layui-bg-blue" lay-percent="80%"></div>
-                      </div>
-                      <div style={{ marginTop: '10px' }}>
-                        <a href="#" className="layui-btn layui-btn-primary layui-border-blue">
-                          <i className="layui-icon layui-icon-release"></i> 查看详情
-                        </a>
-                      </div>
-                    </div>
-                  </div>
+            {activeTab === 'experience' && (
+              <div className="glass-card p-8 rounded-2xl animate-slide-up">
+                <h2 className="text-2xl font-bold text-white mb-8 border-b border-white/10 pb-4">我的经历</h2>
+                <div className="space-y-4">
+                  {experiences.map((exp, index) => (
+                    <TimelineItem
+                      key={index}
+                      period={exp.period}
+                      title={exp.title}
+                      achievement={exp.achievement}
+                      details={exp.details}
+                    />
+                  ))}
                 </div>
               </div>
-            </div>
+            )}
+
+            {activeTab === 'thoughts' && (
+              <div className="space-y-6 animate-slide-up">
+                {loadingIssues ? (
+                  <div className="flex justify-center items-center h-40">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  </div>
+                ) : issues.length > 0 ? (
+                  issues.map((issue) => (
+
+                    <div key={issue.id} className="glass-card hover:bg-white/5 transition-colors p-6 rounded-xl group cursor-pointer">
+                      <Link href={`/post?id=${issue.number}`} className="block">
+                        <div className="flex justify-between items-start mb-4">
+                          <h3 className="text-xl font-bold text-white group-hover:text-primary transition-colors">{issue.title}</h3>
+                          <span className="text-xs bg-white/10 text-gray-400 px-2 py-1 rounded">
+                            {new Date(issue.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div className="text-gray-400 line-clamp-3 text-sm">
+                          {issue.body}
+                        </div>
+                        <span className="inline-block mt-4 text-primary text-sm hover:underline">Read Article →</span>
+                      </Link>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center text-gray-500 py-10">暂无内容，请移步 GitHub 查看。</div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      <div className="layui-footer" style={{ textAlign: 'center', padding: '15px 0' }}>
-        <p>© 2024 李墨飞扬. All rights reserved.</p>
-        <p>
-          <a href={personalInfo.github} target="_blank" rel="noopener noreferrer" className="layui-font-gray">
-            <i className="layui-icon layui-icon-login-github"></i>
-          </a>
-        </p>
-      </div>
-
-      <style jsx global>{`
-        .hover-shadow:hover {
-          box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-          transform: translateY(-2px);
-          transition: all 0.3s ease;
-        }
-        .layui-card {
-          border-radius: 4px;
-          overflow: hidden;
-          background-color: rgba(255, 255, 255, 0.95);
-        }
-        .layui-nav {
-          background-color: rgba(35, 38, 46, 0.9);
-        }
-        .layui-layout-admin .layui-header {
-          background-color: rgba(35, 38, 46, 0.9);
-        }
-        .layui-layout-admin .layui-body {
-          background-color: transparent;
-        }
-        .layui-timeline-content {
-          padding-left: 25px;
-          background-color: rgba(255, 255, 255, 0.95);
-          padding: 15px;
-          border-radius: 4px;
-        }
-        .layui-timeline-title {
-          margin-bottom: 10px;
-        }
-        .layui-progress {
-          margin-bottom: 15px;
-        }
-        .layui-tab-content {
-          background-color: rgba(255, 255, 255, 0.95);
-        }
-      `}</style>
-    </div>
+    </Layout>
   );
-} 
+}

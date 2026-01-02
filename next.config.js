@@ -6,6 +6,9 @@ const nextConfig = {
   },
   basePath: '',
   assetPrefix: '',
+  publicRuntimeConfig: {
+    staticFolder: '/public',
+  },
 }
 
 module.exports = nextConfig 
